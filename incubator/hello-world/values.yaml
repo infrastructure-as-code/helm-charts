@@ -11,11 +11,9 @@ service:
   type: ClusterIP
   externalPort: 8000
   internalPort: 8080
-  annotations:
-    # Uncomment to have Prometheus scrape metrics from this service
-    # prometheus.io/scrape: "true"
-    # prometheus.io/path: "/metrics"
-    # prometheus.io/port: "8080"
+  prometheus:
+    scrape: "true"
+    path: "/metrics"
 ingress:
   enabled: false
   # Used to create an Ingress record.

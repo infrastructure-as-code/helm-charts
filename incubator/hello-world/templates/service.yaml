@@ -7,7 +7,10 @@ metadata:
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-  annotations: {{ .Values.service.annotations }}
+  annotations:
+    prometheus.io/scrape: "{{ .Values.service.prometheus.scrape }}"
+    prometheus.io/path: "{{ .Values.service.prometheus.path }}"
+    prometheus.io/port: "{{ .Values.service.internalPort }}"
 spec:
   type: {{ .Values.service.type }}
   ports:
