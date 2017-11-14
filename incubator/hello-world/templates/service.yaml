@@ -8,8 +8,8 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   annotations:
-    prometheus.io/scrape: "{{ .Values.service.prometheus.scrape }}"
-    prometheus.io/path: "{{ .Values.service.prometheus.path }}"
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
     prometheus.io/port: "{{ .Values.service.internalPort }}"
 spec:
   type: {{ .Values.service.type }}

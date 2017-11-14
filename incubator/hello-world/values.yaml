@@ -11,9 +11,6 @@ service:
   type: ClusterIP
   externalPort: 8000
   internalPort: 8080
-  prometheus:
-    scrape: "true"
-    path: "/metrics"
 ingress:
   enabled: false
   # Used to create an Ingress record.
