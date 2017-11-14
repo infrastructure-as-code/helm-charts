@@ -1,0 +1,22 @@
+# stolen from https://github.com/kubenow/helm-charts/blob/master/.travis.yml
+language: python
+
+env:
+ global:
+  - HELM_URL=https://storage.googleapis.com/kubernetes-helm
+  - HELM_TGZ=helm-v2.4.1-linux-amd64.tar.gz
+  - TARGET_BR=gh-pages
+  - GH_URL=https://kubenow.github.io/helm-charts
+
+install:
+  # Installing Helm
+  - wget -q ${HELM_URL}/${HELM_TGZ}
+  - tar xzfv ${HELM_TGZ}
+  - PATH=`pwd`/linux-amd64/:$PATH
+  - helm init --client-only
+
+script:
+  - >
+    for dir in $(ls -d incubator/*); do
+      helm lint "${dir}" || travis_terminate 1
+    done
