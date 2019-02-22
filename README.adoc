@@ -8,7 +8,9 @@ A collection of link:https://helm.sh/[Helm] charts that one may hopefully find u
 
 == Instructions
 
-TBD.
+```
+helm repo add iac https://infrastructure-as-code.github.io/helm-charts
+```
 
 == Repository Structure
 
