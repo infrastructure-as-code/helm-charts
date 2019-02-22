@@ -24,4 +24,4 @@ dest_dir=$(dirname ${package})
 
 git clone https://github.com/${gh_user}/${gh_repo} "${scratch}"
 helm package --destination=${dest_dir} "${scratch}/${package}"
-#helm repo index . --url https://${gh_user}.github.io/${gh_repo} --merge index.yaml
+helm repo index . --url https://${gh_user}.github.io/${gh_repo} --merge index.yaml

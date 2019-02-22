@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  hello-world:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: 2019-02-21T20:19:46.487627-05:00
+    description: A "Hello, World" Helm chart
+    digest: c5cbd6d1c4a85c9bc59ed5dfc41c611830df1f39dde8048e04ffcd09df7c679c
+    name: hello-world
+    urls:
+    - https://infrastructure-as-code.github.io/helm-charts/incubating/hello-world-0.1.0.tgz
+    version: 0.1.0
+generated: 2019-02-21T20:19:46.486464-05:00
