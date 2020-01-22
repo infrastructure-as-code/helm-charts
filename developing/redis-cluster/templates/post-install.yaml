@@ -1,0 +1,46 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: post-install-job
+        image: "{{ .Values.image.repository }}"
+        volumeMounts:
+        - name: clustering
+          mountPath: /script
+          readOnly: true
+        - name: health
+          mountPath: /health
+          readOnly: true
+        command:
+        - "/script/create-cluster.sh"
+      volumes:
+      - name: clustering
+        configMap:
+          name: {{ include "redis-cluster.fullname" . }}-clustering
+          defaultMode: 0755
+      - name: health
+        configMap:
+          name: {{ include "redis-cluster.fullname" . }}-health
+          defaultMode: 0755

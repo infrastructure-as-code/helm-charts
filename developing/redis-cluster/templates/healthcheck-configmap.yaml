@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "redis-cluster.fullname" . }}-health
+data:
+  ping_readiness.sh: |
+    #!/bin/sh
+    extras=""
+    if [[ -n "$2" ]]; then
+      extras="-h $2"
+    fi
+    set -uo pipefail
+    error_code=0
+    response=$(timeout -s 9 $1 redis-cli ${extras} ping)
+    if [[ "${response}" != "PONG" ]]; then
+      echo "${response}"
+      error_code=1
+    fi
+    exit "${error_code}"
+  ping_liveness.sh: |
+    #!/bin/sh
+    extras=""
+    if [[ -n "$2" ]]; then
+      extras="-h $2"
+    fi
+    set -uo pipefail
+    error_code=0
+    response=$(timeout -s 9 $1 redis-cli ${extras} ping)
+    if [[ "${response}" != "PONG" ]] && \
+      [[ "${response}" != "LOADING Redis is loading the dataset in memory" ]]; then
+      echo "${response}"
+      error_code=1
+    fi
+    exit "${error_code}"
