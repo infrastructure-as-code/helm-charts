@@ -1,4 +1,4 @@
-apiVersion: v2
+apiVersion: v1
 name: redis-cluster
 description: Redis Cluster Helm chart
 
