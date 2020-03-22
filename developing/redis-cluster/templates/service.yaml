@@ -15,7 +15,8 @@ metadata:
   labels:
     {{- include "redis-cluster.labels" $root | nindent 4 }}
 spec:
-  type: {{ $root.Values.service.type }}
+  #type: {{ $root.Values.service.type }}
+  type: ClusterIP
   clusterIP: None
   ports:
     - port: {{ $root.Values.service.port }}
@@ -30,6 +31,27 @@ spec:
     {{- include "redis-cluster.selectorLabels" $root | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ include "redis-cluster.fullname" $root }}-{{ $podIndex }}
 {{ end -}}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "redis-cluster.fullname" . }}-main
+  labels:
+    {{- include "redis-cluster.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 6379
+      # protocol: TCP
+      name: client
+    #- port: 16379
+    #  targetPort: 16379
+    #  # protocol: TCP
+    #  name: gossip
+  selector:
+    {{- include "redis-cluster.selectorLabels" . | nindent 4 }}
 
 # not headless
 {{- else -}}
