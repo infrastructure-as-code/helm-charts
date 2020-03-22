@@ -3,6 +3,7 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 3
+headless: false
 
 image:
   repository: redis:5.0-alpine
