@@ -21,9 +21,9 @@ data:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "redis-cluster.fullname" . }}
+  name: {{ include "redis-cluster.fullname" . }}-headless
 spec:
-  serviceName: {{ include "redis-cluster.fullname" . }}
+  serviceName: {{ include "redis-cluster.fullname" . }}-headless
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:

@@ -67,8 +67,8 @@ data:
     . ${DIRNAME}/common.sh
     set -euxo pipefail
     port={{- $port }}
-    domain=".{{ include "redis-cluster.fullname" $global }}"
-    hosts="{{- range $i, $e := until $replicas }}{{ include "redis-cluster.fullname" $global }}-{{ $i }}${domain}{{- if (lt ( add1 $i ) $replicas ) }} {{ end }}{{- end }}"
+    domain=".{{ include "redis-cluster.fullname" $global }}-headless"
+    hosts="{{- range $i, $e := until $replicas }}{{ include "redis-cluster.fullname" $global }}-headless-{{ $i }}${domain}{{- if (lt ( add1 $i ) $replicas ) }} {{ end }}{{- end }}"
 
     function form_redis_cluster()
     {
