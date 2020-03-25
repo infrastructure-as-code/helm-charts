@@ -28,10 +28,12 @@ spec:
   selector:
     matchLabels:
       {{- include "redis-cluster.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: shards
   template:
     metadata:
       labels:
         {{- include "redis-cluster.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: shards
     spec:
       containers:
       - name: {{ .Chart.Name }}

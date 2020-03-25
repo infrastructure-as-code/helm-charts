@@ -1,0 +1,60 @@
+{{- $replicas := .Values.replicaCount | int }}
+{{- $global := . }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "redis-cluster.fullname" $global }}-proxy
+data:
+  nutcracker.yml: |
+    proxy:
+      listen: 0.0.0.0:{{ $global.Values.service.port }}
+      hash: fnv1a_64
+      distribution: ketama
+      auto_eject_hosts: true
+      redis: true
+      server_retry_timeout: 2000
+      server_failure_limit: 1
+      servers:
+{{- range $i, $e := until $replicas }}
+      - {{ include "redis-cluster.fullname" $global }}-{{ $i }}.{{ include "redis-cluster.fullname" $global }}:{{ $global.Values.service.port }}:10
+{{- if (lt ( add1 $i ) $replicas ) }}{{- end }}
+{{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "redis-cluster.fullname" $global }}-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "redis-cluster.selectorLabels" $global | nindent 6 }}
+      app.kubernetes.io/component: proxy
+  template:
+    metadata:
+      labels:
+        {{- include "redis-cluster.selectorLabels" $global | nindent 8 }}
+        app.kubernetes.io/component: proxy
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}-proxy
+        image: softonic/twemproxy:0.4.1
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: client
+          containerPort: 6379
+        command:
+        - "/usr/local/sbin/nutcracker"
+        - "--conf-file=/usr/local/etc/nutcracker.yml"
+        volumeMounts:
+        - name: etc
+          mountPath: /usr/local/etc
+          readOnly: true
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: etc
+        configMap:
+          name: {{ include "redis-cluster.fullname" $global }}-proxy
+          defaultMode: 0644
