@@ -17,7 +17,7 @@ data:
       server_failure_limit: 1
       servers:
 {{- range $i, $e := until $replicas }}
-      - {{ include "redis-cluster.fullname" $global }}-{{ $i }}.{{ include "redis-cluster.fullname" $global }}:{{ $global.Values.service.port }}:10
+      - {{ include "redis-cluster.fullname" $global }}-headless-{{ $i }}.{{ include "redis-cluster.fullname" $global }}-headless:{{ $global.Values.service.port }}:10
 {{- if (lt ( add1 $i ) $replicas ) }}{{- end }}
 {{- end }}
 ---
