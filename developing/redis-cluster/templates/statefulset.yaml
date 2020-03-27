@@ -6,15 +6,19 @@ metadata:
 data:
   update-node.sh: |
     #!/bin/sh
+{{- if .Values.enableRedisCluster }}
     REDIS_NODES="/data/nodes.conf"
     sed -i -e "/myself/ s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/${POD_IP}/" ${REDIS_NODES}
+{{- end }}
     exec "$@"
   redis.conf: |+
-    cluster-enabled no
+{{- if .Values.enableRedisCluster }}
+    cluster-enabled yes
     cluster-require-full-coverage no
     cluster-node-timeout 15000
     cluster-config-file /data/nodes.conf
     cluster-migration-barrier 1
+{{- end }}
     appendonly yes
     protected-mode no
 ---
@@ -24,7 +28,7 @@ metadata:
   name: {{ include "redis-cluster.fullname" . }}-headless
 spec:
   serviceName: {{ include "redis-cluster.fullname" . }}-headless
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.shards.count }}
   selector:
     matchLabels:
       {{- include "redis-cluster.selectorLabels" . | nindent 6 }}
@@ -37,14 +41,20 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.image.repository }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: "{{ .Values.shards.image.repository }}"
+        imagePullPolicy: {{ .Values.shards.image.pullPolicy }}
         ports:
+{{- if eq .Values.shards.type "redis" }}
         - name: client
           containerPort: 6379
         - name: gossip
           containerPort: 16379
         command: ["/conf/update-node.sh", "redis-server", "/conf/redis.conf"]
+{{- else if eq .Values.shards.type "memcached" }}
+        - name: client
+          containerPort: 11211
+        command: ["memcached"]
+{{- end }}
         env:
         - name: POD_IP
           valueFrom:
@@ -61,32 +71,32 @@ spec:
           mountPath: /health
           readOnly: true
         resources:
-          {{- toYaml .Values.resources | nindent 12 }}
-        {{- if .Values.redis.livenessProbe.enabled }}
+          {{- toYaml .Values.shards.resources | nindent 12 }}
+        {{- if .Values.shards.livenessProbe.enabled }}
         livenessProbe:
-          initialDelaySeconds: {{ .Values.redis.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.redis.livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.redis.livenessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.redis.livenessProbe.successThreshold }}
-          failureThreshold: {{ .Values.redis.livenessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.shards.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.shards.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.shards.livenessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.shards.livenessProbe.successThreshold }}
+          failureThreshold: {{ .Values.shards.livenessProbe.failureThreshold }}
           exec:
             command:
             - sh
             - -c
-            - /health/ping_liveness.sh {{ .Values.redis.livenessProbe.timeoutSeconds }}
+            - /health/ping_liveness.sh {{ .Values.shards.livenessProbe.timeoutSeconds }}
         {{- end }}
-        {{- if .Values.redis.readinessProbe.enabled }}
+        {{- if .Values.shards.readinessProbe.enabled }}
         readinessProbe:
-          initialDelaySeconds: {{ .Values.redis.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.redis.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.redis.readinessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.redis.readinessProbe.successThreshold }}
-          failureThreshold: {{ .Values.redis.readinessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.shards.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.shards.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.shards.readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.shards.readinessProbe.successThreshold }}
+          failureThreshold: {{ .Values.shards.readinessProbe.failureThreshold }}
           exec:
             command:
             - sh
             - -c
-            - /health/ping_readiness.sh {{ .Values.redis.readinessProbe.timeoutSeconds }}
+            - /health/ping_readiness.sh {{ .Values.shards.readinessProbe.timeoutSeconds }}
         {{- end }}
       volumes:
       - name: conf

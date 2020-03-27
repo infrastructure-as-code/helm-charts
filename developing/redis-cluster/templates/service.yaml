@@ -14,8 +14,8 @@ spec:
   type: ClusterIP
   clusterIP: None
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: 6379
+    - port: {{ .Values.shards.service.port }}
+      targetPort: {{ .Values.shards.service.port }}
       name: client
   selector:
     {{- include "redis-cluster.selectorLabels" . | nindent 4 }}
@@ -28,11 +28,11 @@ metadata:
   labels:
     {{- include "redis-cluster.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.proxy.service.type }}
   #externalTrafficPolicy: Local
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: 6379
+    - port: {{ .Values.proxy.service.port }}
+      targetPort: {{ .Values.proxy.service.port }}
       name: client
   selector:
     {{- include "redis-cluster.selectorLabels" . | nindent 4 }}

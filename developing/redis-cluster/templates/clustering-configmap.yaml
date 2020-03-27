@@ -1,3 +1,4 @@
+{{- if .Values.enableRedisCluster }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -105,3 +106,4 @@ data:
     form_redis_cluster ${ips}
     cluster_nodes ${ips}
     exit 0
+{{- end }}
