@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "redis-cluster.fullname" . }}-health
+  name: {{ include "memstore.fullname" . }}-health
 data:
 {{- if eq .Values.shards.type "redis" }}
   ping_readiness.sh: |

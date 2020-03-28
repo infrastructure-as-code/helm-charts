@@ -45,7 +45,7 @@ shards:
 proxy:
   enabled: true
   # number of replicas of the proxy
-  count: 1
+  count: 3
   image:
     repository: softonic/twemproxy:0.4.1
     pullPolicy: IfNotPresent

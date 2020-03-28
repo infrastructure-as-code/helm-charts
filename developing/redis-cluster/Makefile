@@ -1,4 +1,5 @@
 SHELL = /bin/bash
+chart_name = memstore
 chart = .
 release = dev
 namespace = shards
@@ -34,7 +35,7 @@ redis-benchmark:
 		--image=redis:5.0-alpine \
 		-- \
 		/usr/local/bin/redis-benchmark \
-			-h $(release)-redis-cluster.$(namespace) \
+			-h $(release)-$(chart_name).$(namespace) \
 			-q \
 			-t set,get,incr,lpush,lpop,sadd,spop,lpush,lrange \
 			-p 6379 \
@@ -47,7 +48,7 @@ benchmark:
 		--image=redislabs/memtier_benchmark:edge \
 		-- \
 		memtier_benchmark \
-			--server=$(release)-redis-cluster.$(namespace) \
+			--server=$(release)-$(chart_name).$(namespace) \
 			--port=$(port) \
 			--protocol=$(protocol) \
 			--requests=1000

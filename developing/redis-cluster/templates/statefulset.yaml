@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "redis-cluster.fullname" . }}
+  name: {{ include "memstore.fullname" . }}
 data:
   update-node.sh: |
     #!/bin/sh
@@ -25,19 +25,19 @@ data:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "redis-cluster.fullname" . }}-headless
+  name: {{ include "memstore.fullname" . }}-headless
 spec:
-  serviceName: {{ include "redis-cluster.fullname" . }}-headless
+  serviceName: {{ include "memstore.fullname" . }}-headless
   replicas: {{ .Values.shards.count }}
   podManagementPolicy: Parallel
   selector:
     matchLabels:
-      {{- include "redis-cluster.selectorLabels" . | nindent 6 }}
+      {{- include "memstore.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: shards
   template:
     metadata:
       labels:
-        {{- include "redis-cluster.selectorLabels" . | nindent 8 }}
+        {{- include "memstore.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: shards
     spec:
       containers:
@@ -102,11 +102,11 @@ spec:
       volumes:
       - name: conf
         configMap:
-          name: {{ include "redis-cluster.fullname" . }}
+          name: {{ include "memstore.fullname" . }}
           defaultMode: 0755
       - name: health
         configMap:
-          name: {{ include "redis-cluster.fullname" . }}-health
+          name: {{ include "memstore.fullname" . }}-health
           defaultMode: 0755
   volumeClaimTemplates:
   - metadata:

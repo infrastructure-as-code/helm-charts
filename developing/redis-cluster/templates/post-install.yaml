@@ -39,10 +39,10 @@ spec:
       volumes:
       - name: clustering
         configMap:
-          name: {{ include "redis-cluster.fullname" . }}-clustering
+          name: {{ include "memstore.fullname" . }}-clustering
           defaultMode: 0755
       - name: health
         configMap:
-          name: {{ include "redis-cluster.fullname" . }}-health
+          name: {{ include "memstore.fullname" . }}-health
           defaultMode: 0755
 {{- end }}
