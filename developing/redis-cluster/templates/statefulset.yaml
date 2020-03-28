@@ -29,6 +29,7 @@ metadata:
 spec:
   serviceName: {{ include "redis-cluster.fullname" . }}-headless
   replicas: {{ .Values.shards.count }}
+  podManagementPolicy: Parallel
   selector:
     matchLabels:
       {{- include "redis-cluster.selectorLabels" . | nindent 6 }}
@@ -53,7 +54,7 @@ spec:
 {{- else if eq .Values.shards.type "memcached" }}
         - name: client
           containerPort: 11211
-        command: ["memcached"]
+        command: ["memcached", "--port", "{{ .Values.shards.service.port }}"]
 {{- end }}
         env:
         - name: POD_IP

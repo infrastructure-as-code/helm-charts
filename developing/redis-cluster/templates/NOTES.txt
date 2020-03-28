@@ -11,12 +11,12 @@
 2. To connect to Redis without forwarding the remote port:
 
 {{- if contains "ClusterIP" .Values.proxy.service.type }}
-  kubectl run --namespace {{ .Release.Namespace }} --rm --tty -i --restart="Never" --image {{ $image }} --command -- redis-cli -h {{ include "redis-cluster.fullname" . }} -p {{ .Values.proxy.service.port }}
+  kubectl run --namespace {{ .Release.Namespace }} --rm --tty -i --restart="Never" --image={{ $image }} client --command -- redis-cli -h {{ include "redis-cluster.fullname" . }} -p {{ .Values.proxy.service.port }}
 
 {{- else if contains "NodePort" .Values.proxy.service.type }}
   NODE_IP=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.clusterIP}" services {{ include "redis-cluster.fullname" . }})
   NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].port}" services {{ include "redis-cluster.fullname" . }})
-  kubectl run --namespace {{ .Release.Namespace }} --rm --tty -i --restart="Never" --image {{ $image }} redis-client --command -- redis-cli -h ${NODE_IP} -p ${NODE_PORT}
+  kubectl run --namespace {{ .Release.Namespace }} --rm --tty -i --restart="Never" --image={{ $image }} client --command -- redis-cli -h ${NODE_IP} -p ${NODE_PORT}
 
 {{- else if contains "LoadBalancer" .Values.proxy.service.type }}
      NOTE: It may take a few minutes for the LoadBalancer IP to be available.

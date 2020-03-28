@@ -13,6 +13,7 @@ data:
       hash: fnv1a_64
       distribution: ketama
       auto_eject_hosts: true
+      timeout: 300
       redis: {{ .Values.shards.isRedis }}
       server_retry_timeout: 2000
       server_failure_limit: 1
@@ -45,6 +46,16 @@ spec:
         ports:
         - name: client
           containerPort: {{ .Values.proxy.service.port }}
+        livenessProbe:
+          tcpSocket:
+            port: client
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          tcpSocket:
+            port: client
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
         command:
         - "/usr/local/sbin/nutcracker"
         - "--conf-file=/usr/local/etc/nutcracker.yml"

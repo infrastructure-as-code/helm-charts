@@ -3,14 +3,9 @@ chart = .
 release = dev
 namespace = shards
 type ?= redis
+port ?= 6379
+protocol ?= redis
 values = values-$(type).yaml
-
-port = 6379
-protocol = redis
-ifeq ($(type), "memcached")
-port = 11211
-protocol = memcache_text
-endif
 
 update:
 	helm upgrade $(release) $(chart) \
