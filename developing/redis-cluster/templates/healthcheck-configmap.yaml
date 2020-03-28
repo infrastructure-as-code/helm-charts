@@ -1,3 +1,5 @@
+{{- $replicas := .Values.shards.count | int }}
+{{- $global := . }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -37,9 +39,13 @@ data:
 {{- else if eq .Values.shards.type "memcached" }}
   ping_readiness.sh: |
     #!/bin/sh
+    hostname=localhost
+    if [[ -n "$2" ]]; then
+      hostname=$2
+    fi
     set -uo pipefail
     error_code=0
-    response=$(echo version | timeout -s 9 $1 nc localhost {{ .Values.shards.service.port }})
+    response=$(echo version | timeout -s 9 $1 nc ${hostname} {{ .Values.shards.service.port }})
     if [[ "${response:0:7}" != "VERSION" ]]; then
       echo "${response}"
       error_code=1
@@ -47,9 +53,13 @@ data:
     exit "${error_code}"
   ping_liveness.sh: |
     #!/bin/sh
+    hostname=localhost
+    if [[ -n "$2" ]]; then
+      hostname=$2
+    fi
     set -uo pipefail
     error_code=0
-    response=$(echo version | timeout -s 9 $1 nc localhost {{ .Values.shards.service.port }})
+    response=$(echo version | timeout -s 9 $1 nc ${hostname} {{ .Values.shards.service.port }})
     if [[ "${response:0:7}" != "VERSION" ]]; then
       echo "${response}"
       error_code=1

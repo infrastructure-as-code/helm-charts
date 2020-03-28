@@ -8,13 +8,13 @@ protocol ?= redis
 values = values-$(type).yaml
 
 update:
-	helm upgrade $(release) $(chart) \
+	helm upgrade --wait $(release) $(chart) \
 		--values $(values) \
 		--namespace $(namespace)
 
 create:
 	kubectl create namespace $(namespace)
-	helm install $(release) $(chart) \
+	helm install --wait $(release) $(chart) \
 		--values $(values) \
 		--namespace $(namespace)
 
