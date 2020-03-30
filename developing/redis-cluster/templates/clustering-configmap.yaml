@@ -68,8 +68,8 @@ data:
     . ${DIRNAME}/common.sh
     set -euxo pipefail
     port={{- $port }}
-    domain="{{ include "memstore.fullname" $global }}-headless"
-    hosts="{{- range $i, $e := until $replicas }}{{ include "memstore.fullname" $global }}-headless-{{ $i }}.${domain}{{- if (lt ( add1 $i ) $replicas ) }} {{ end }}{{- end }}"
+    domain="{{ include "memstore.fullname" $global }}-shards"
+    hosts="{{- range $i, $e := until $replicas }}{{ include "memstore.fullname" $global }}-shards-{{ $i }}.${domain}{{- if (lt ( add1 $i ) $replicas ) }} {{ end }}{{- end }}"
 
     function form_redis_cluster()
     {

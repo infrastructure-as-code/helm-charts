@@ -19,7 +19,7 @@ data:
       server_failure_limit: 1
       servers:
 {{- range $i, $e := until $replicas }}
-      - {{ include "memstore.fullname" $global }}-headless-{{ $i }}.{{ include "memstore.fullname" $global }}-headless:{{ $global.Values.shards.service.port }}:{{- $weight }}
+      - {{ include "memstore.fullname" $global }}-shards-{{ $i }}.{{ include "memstore.fullname" $global }}-shards:{{ $global.Values.shards.service.port }}:{{- $weight }}
 {{- if (lt ( add1 $i ) $replicas ) }}{{- end }}
 {{- end }}
 ---
