@@ -212,7 +212,9 @@ proxy:
 | shards.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe to be considered successful after having failed. |
 | shards.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the probe times out. |
 | shards.resources | object | `{}` |  |
+| shards.service.enabled | bool | `false` | Expose each as a service for direct access |
 | shards.service.port | int | `6379` | the ClusterIP port for the sevice to listen on within the cluster |
+| shards.service.type | string | `ClusterIP` | If enabled, the type of service to expose as |
 | shards.type | string | `"redis"` | `redis` or `memcached` data shard |
 
 ## Motivation

@@ -26,6 +26,8 @@ shards:
     #   cpu: 100m
     #   memory: 128Mi
   service:
+    enabled: true
+    type: ClusterIP
     port: 11211
   livenessProbe:
     enabled: true
@@ -43,7 +45,7 @@ shards:
     failureThreshold: 5
 
 proxy:
-  enabled: true
+  enabled: false
   # number of replicas of the proxy
   count: 3
   image:

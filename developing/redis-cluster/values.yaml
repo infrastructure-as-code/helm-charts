@@ -27,6 +27,10 @@ shards:
     #   cpu: 100m
     #   memory: 128Mi
   service:
+    # shards.service.enabled -- Expose each as a service for direct access
+    enabled: false
+    # shards.service.type -- If enabled, the type of service to expose as
+    type: ClusterIP
     # shards.service.port -- the ClusterIP port for the sevice to listen on within the cluster
     port: 6379
   livenessProbe:

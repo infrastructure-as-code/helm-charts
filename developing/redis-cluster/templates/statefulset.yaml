@@ -25,9 +25,9 @@ data:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "memstore.fullname" . }}-shards
+  name: {{ include "memstore.fullname" . }}-headless
 spec:
-  serviceName: {{ include "memstore.fullname" . }}-shards
+  serviceName: {{ include "memstore.fullname" . }}-headless
   replicas: {{ .Values.shards.count }}
   podManagementPolicy: Parallel
   selector:
