@@ -245,3 +245,6 @@ This chart was first conceived when the author ran into a situation where a >300
 1. https://github.com/helm/charts/tree/master/stable/redis
 1. https://github.com/helm/charts/tree/master/stable/redis-ha
 1. https://github.com/bitnami/charts/tree/master/bitnami/redis
+1. https://www.digitalocean.com/community/tutorials/how-to-perform-redis-benchmark-tests
+1. https://redislabs.com/blog/memtier_benchmark-a-high-throughput-benchmarking-tool-for-redis-memcached/
+1. https://hub.docker.com/r/redislabs/memtier_benchmark

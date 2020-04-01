@@ -66,7 +66,7 @@ proxy:
   # proxy.count -- number of replicas of the proxy
   count: 3
   image:
-    repository: softonic/twemproxy:0.4.1
+    repository: vimagick/twemproxy:latest
     pullPolicy: IfNotPresent
   service:
     # proxy.service.type -- ClusterIP, NodePort or LoadBalancer

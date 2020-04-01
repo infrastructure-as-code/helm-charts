@@ -3,7 +3,7 @@ chart_name = memstore
 chart = .
 release = dev
 namespace = shards
-type ?= redis
+type ?= memcached
 values = values-$(type).yaml
 
 ifeq ($(type),memcached)
@@ -34,10 +34,8 @@ delete:
 	-kubectl delete namespace $(namespace)
 	-kubectl delete pod benchmark
 
-# https://www.digitalocean.com/community/tutorials/how-to-perform-redis-benchmark-tests
-# https://github.com/twitter/twemproxy/blob/master/notes/redis.md
 redis-benchmark:
-	kubectl run $@ -it --rm --restart="Never" --generator=run-pod/v1 \
+	kubectl run $@ -it --rm --restart="Never" \
 		--image=redis:5.0-alpine \
 		-- \
 		/usr/local/bin/redis-benchmark \
@@ -47,20 +45,52 @@ redis-benchmark:
 			-p 6379 \
 			-c 100
 
-# https://redislabs.com/blog/memtier_benchmark-a-high-throughput-benchmarking-tool-for-redis-memcached/
-# https://hub.docker.com/r/redislabs/memtier_benchmark
+hosts_headless_service = \
+	$(release)-$(chart_name)-headless.$(namespace)
+
+hosts_headless_shards = \
+	$(release)-$(chart_name)-headless-0.$(release)-$(chart_name)-headless.$(namespace) \
+	$(release)-$(chart_name)-headless-1.$(release)-$(chart_name)-headless.$(namespace) \
+	$(release)-$(chart_name)-headless-2.$(release)-$(chart_name)-headless.$(namespace)
+
+hosts_proxy_service = \
+	$(release)-$(chart_name).$(namespace)
+
+hosts_shards = \
+	$(release)-$(chart_name)-shard-0.$(namespace) \
+	$(release)-$(chart_name)-shard-1.$(namespace) \
+	$(release)-$(chart_name)-shard-2.$(namespace)
+
 benchmark:
-	kubectl run $@ -it --rm --restart="Never" --generator=run-pod/v1 \
+	kubectl run $@-$${RANDOM} -it --rm --restart="Never" \
 		--image=redislabs/memtier_benchmark:edge \
 		-- \
 		memtier_benchmark \
-			--server=$(release)-$(chart_name).$(namespace) \
+			--server=$(host) \
 			--port=$(port) \
 			--protocol=$(protocol) \
 			--requests=1000
 
+benchmark-headless-service:
+	$(MAKE) benchmark host=$(release)-$(chart_name)-headless.$(namespace)
+
+benchmark-headless-shards:
+	$(MAKE) benchmark host=$(release)-$(chart_name)-headless-0.$(release)-$(chart_name)-headless.$(namespace)
+	$(MAKE) benchmark host=$(release)-$(chart_name)-headless-1.$(release)-$(chart_name)-headless.$(namespace)
+	$(MAKE) benchmark host=$(release)-$(chart_name)-headless-2.$(release)-$(chart_name)-headless.$(namespace)
+
+benchmark-proxy-service:
+	$(MAKE) benchmark host=$(release)-$(chart_name).$(namespace)
+
+benchmark-shards:
+	$(MAKE) benchmark host=$(release)-$(chart_name)-shard-0.$(namespace)
+	$(MAKE) benchmark host=$(release)-$(chart_name)-shard-1.$(namespace)
+	$(MAKE) benchmark host=$(release)-$(chart_name)-shard-2.$(namespace)
+
+benchmarks: benchmark-headless-service benchmark-headless-shards benchmark-proxy-service benchmark-shards
+
 shell:
-	kubectl run $@-$$RANDOM -it --rm --restart="Never" --generator=run-pod/v1 \
+	kubectl run $@-$$RANDOM -it --rm --restart="Never" \
 		--image=redis:5.0-alpine \
 		-- \
 		/bin/sh
