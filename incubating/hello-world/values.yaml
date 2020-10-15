@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: infrastructureascode/hello-world
-  tag: 2.2.1
+  tag: latest
   pullPolicy: IfNotPresent
 
 nameOverride: ""
