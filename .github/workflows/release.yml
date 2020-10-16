@@ -22,6 +22,14 @@ jobs:
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.0.0
         with:
+          charts_dir: developing
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.0.0
+        with:
           charts_dir: incubating
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
