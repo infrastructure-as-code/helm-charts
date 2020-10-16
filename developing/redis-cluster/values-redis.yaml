@@ -1,0 +1,19 @@
+shards:
+  # redis or memcached
+  type: redis
+  isRedis: true
+  # number of data partitions/shards
+  count: 3
+  image:
+    repository: redis:5.0-alpine
+    pullPolicy: IfNotPresent
+  service:
+    enabled: true
+    type: ClusterIP
+    port: 6379
+
+proxy:
+  enabled: true
+  service:
+    type: ClusterIP
+    port: 6379

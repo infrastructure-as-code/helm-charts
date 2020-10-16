@@ -1,0 +1,131 @@
+# Default values for redis-cluster.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# enable Redis clustering.  Cannot be used with enableProxy=true
+enableRedisCluster: false
+
+shards:
+  # shards.type -- `redis` or `memcached` data shard
+  type: redis
+  # shards.isRedis -- are we using Redis data shards?
+  isRedis: true
+  # shards.count -- number of data shards
+  count: 3
+  image:
+    repository: redis:5.0-alpine
+    pullPolicy: IfNotPresent
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  service:
+    # shards.service.enabled -- Expose each as a service for direct access
+    enabled: false
+    # shards.service.type -- If enabled, the type of service to expose as
+    type: ClusterIP
+    # shards.service.port -- the ClusterIP port for the sevice to listen on within the cluster
+    port: 6379
+  livenessProbe:
+    # shards.livenessProbe.enabled -- enable Kubernetes liveness probe
+    enabled: true
+    # shards.livenessProbe.initialDelaySeconds -- Number of seconds after the container has started before the probe is initiated.
+    initialDelaySeconds: 5
+    # shards.livenessProbe.periodSeconds -- How often (in seconds) to perform the probe.
+    periodSeconds: 5
+    # shards.livenessProbe.timeoutSeconds -- Number of seconds after which the probe times out.
+    timeoutSeconds: 5
+    # shards.livenessProbe.successThreshold -- Minimum consecutive successes for the probe to be considered successful after having failed.
+    successThreshold: 1
+    # shards.livenessProbe.failureThreshold -- Number of failures to accept before giving up and marking the pod as Unready.
+    failureThreshold: 5
+  readinessProbe:
+    # shards.readinessProbe.enabled -- enable Kubernetes readiness probe
+    enabled: true
+    # shards.readinessProbe.initialDelaySeconds -- Number of seconds after the container has started before the probe is initiated.
+    initialDelaySeconds: 5
+    # shards.readinessProbe.periodSeconds -- How often (in seconds) to perform the probe.
+    periodSeconds: 5
+    # shards.readinessProbe.timeoutSeconds -- Number of seconds after which the probe times out.
+    timeoutSeconds: 1
+    # shards.readinessProbe.successThreshold -- Minimum consecutive successes for the probe to be considered successful after having failed.
+    successThreshold: 1
+    # shards.readinessProbe.failureThreshold -- Number of failures to accept before giving up and marking the pod as Unready.
+    failureThreshold: 5
+
+proxy:
+  # proxy.enabled -- is the problem to be enabled?
+  enabled: true
+  # proxy.count -- number of replicas of the proxy
+  count: 3
+  image:
+    repository: vimagick/twemproxy:latest
+    pullPolicy: IfNotPresent
+  service:
+    # proxy.service.type -- ClusterIP, NodePort or LoadBalancer
+    type: ClusterIP
+    # proxy.service.port -- the port to expose the service on
+    port: 6379
+  resources: {}
+  livenessProbe:
+    # shards.livenessProbe.enabled -- enable Kubernetes liveness probe
+    enabled: true
+    # shards.livenessProbe.initialDelaySeconds -- Number of seconds after the container has started before the probe is initiated.
+    initialDelaySeconds: 5
+    # shards.livenessProbe.periodSeconds -- How often (in seconds) to perform the probe.
+    periodSeconds: 5
+    # shards.livenessProbe.timeoutSeconds -- Number of seconds after which the probe times out.
+    timeoutSeconds: 5
+    # shards.livenessProbe.successThreshold -- Minimum consecutive successes for the probe to be considered successful after having failed.
+    successThreshold: 1
+    # shards.livenessProbe.failureThreshold -- Number of failures to accept before giving up and marking the pod as Unready.
+    failureThreshold: 5
+  readinessProbe:
+    # shards.readinessProbe.enabled -- enable Kubernetes readiness probe
+    enabled: true
+    # shards.readinessProbe.initialDelaySeconds -- Number of seconds after the container has started before the probe is initiated.
+    initialDelaySeconds: 5
+    # shards.readinessProbe.periodSeconds -- How often (in seconds) to perform the probe.
+    periodSeconds: 5
+    # shards.readinessProbe.timeoutSeconds -- Number of seconds after which the probe times out.
+    timeoutSeconds: 1
+    # shards.readinessProbe.successThreshold -- Minimum consecutive successes for the probe to be considered successful after having failed.
+    successThreshold: 1
+    # shards.readinessProbe.failureThreshold -- Number of failures to accept before giving up and marking the pod as Unready.
+    failureThreshold: 5
+
+# nameOverride -- Override the chart name
+nameOverride: ""
+
+# fullnameOverride -- Fullname override
+fullnameOverride: ""
+
+serviceAccount:
+  # serviceAccount.create -- Specifies whether a service account should be created
+  create: false
+  # serviceAccount.annotations -- Annotations to add to the service account
+  annotations: {}
+  # serviceAccount.name -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template
+  name:
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+cluster:
+  # cluster.domain -- the Kubernetes cluster domain
+  domain: "cluster.local"

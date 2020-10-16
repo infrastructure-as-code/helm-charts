@@ -1,0 +1,18 @@
+shards:
+  # redis or memcached
+  type: memcached
+  isRedis: false
+  # number of data partitions/shards
+  image:
+    repository: memcached:1.6-alpine
+    pullPolicy: IfNotPresent
+  service:
+    enabled: true
+    type: ClusterIP
+    port: 11211
+
+proxy:
+  enabled: true
+  service:
+    type: ClusterIP
+    port: 11211

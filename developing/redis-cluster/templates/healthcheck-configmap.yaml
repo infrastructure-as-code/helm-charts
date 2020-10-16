@@ -1,0 +1,68 @@
+{{- $replicas := .Values.shards.count | int }}
+{{- $global := . }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "memstore.fullname" . }}-health
+data:
+{{- if eq .Values.shards.type "redis" }}
+  ping_readiness.sh: |
+    #!/bin/sh
+    extras=""
+    if [[ -n "$2" ]]; then
+      extras="-h $2"
+    fi
+    set -uo pipefail
+    error_code=0
+    response=$(timeout -s 9 $1 redis-cli ${extras} ping)
+    if [[ "${response}" != "PONG" ]]; then
+      echo "${response}"
+      error_code=1
+    fi
+    exit "${error_code}"
+  ping_liveness.sh: |
+    #!/bin/sh
+    extras=""
+    if [[ -n "$2" ]]; then
+      extras="-h $2"
+    fi
+    set -uo pipefail
+    error_code=0
+    response=$(timeout -s 9 $1 redis-cli ${extras} ping)
+    if [[ "${response}" != "PONG" ]] && \
+      [[ "${response}" != "LOADING Redis is loading the dataset in memory" ]]; then
+      echo "${response}"
+      error_code=1
+    fi
+    exit "${error_code}"
+{{- else if eq .Values.shards.type "memcached" }}
+  ping_readiness.sh: |
+    #!/bin/sh
+    hostname=localhost
+    if [[ -n "$2" ]]; then
+      hostname=$2
+    fi
+    set -uo pipefail
+    error_code=0
+    response=$(echo version | timeout -s 9 $1 nc ${hostname} {{ .Values.shards.service.port }})
+    if [[ "${response:0:7}" != "VERSION" ]]; then
+      echo "${response}"
+      error_code=1
+    fi
+    exit "${error_code}"
+  ping_liveness.sh: |
+    #!/bin/sh
+    hostname=localhost
+    if [[ -n "$2" ]]; then
+      hostname=$2
+    fi
+    set -uo pipefail
+    error_code=0
+    response=$(echo version | timeout -s 9 $1 nc ${hostname} {{ .Values.shards.service.port }})
+    if [[ "${response:0:7}" != "VERSION" ]]; then
+      echo "${response}"
+      error_code=1
+    fi
+    exit "${error_code}"
+{{- end }}

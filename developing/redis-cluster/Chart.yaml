@@ -1,0 +1,19 @@
+apiVersion: v1
+name: memstore
+version: 0.1.0
+description: A Twemproxy-fronted, partitioned in-memory data store backed by Redis or Memcached data shards.
+keywords:
+- redis
+- memcached
+- memcache
+- twemproxy
+- memorystore
+- elasticache
+type: application
+# Using the twemproxy version
+appVersion: 0.4.1
+maintainers:
+- name: Vince Tse
+  email: vincetse@users.noreply.github.com
+  url: https://github.com/vincetse/
+deprecated: false

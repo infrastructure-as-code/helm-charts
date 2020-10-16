@@ -1,0 +1,28 @@
+{{- $port := .Values.shards.service.port }}
+{{- $image := .Values.shards.image.repository }}
+1. To forward the remote port locally:
+
+  LOCAL_PORT=6379
+  kubectl port-forward service/{{ include "memstore.fullname" . }} --namespace {{ .Release.Namespace }} ${LOCAL_PORT}:{{ $port }}
+
+  # run the Redis client from another terminal
+  redis-cli -p ${LOCAL_PORT}
+
+2. To connect to Redis without forwarding the remote port:
+
+{{- if contains "ClusterIP" .Values.proxy.service.type }}
+  kubectl run --namespace {{ .Release.Namespace }} --rm --tty -i --restart="Never" --image={{ $image }} client --command -- redis-cli -h {{ include "memstore.fullname" . }} -p {{ .Values.proxy.service.port }}
+
+{{- else if contains "NodePort" .Values.proxy.service.type }}
+  NODE_IP=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.clusterIP}" services {{ include "memstore.fullname" . }})
+  NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].port}" services {{ include "memstore.fullname" . }})
+  kubectl run --namespace {{ .Release.Namespace }} --rm --tty -i --restart="Never" --image={{ $image }} client --command -- redis-cli -h ${NODE_IP} -p ${NODE_PORT}
+
+{{- else if contains "LoadBalancer" .Values.proxy.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "memstore.fullname" . }}'
+
+  SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "memstore.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  redis-cli -h ${SERVICE_IP} -p {{ .Values.proxy.service.port }}
+
+{{- end }}
