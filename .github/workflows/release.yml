@@ -19,14 +19,14 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Run chart-releaser
+      - name: Release developing charts
         uses: helm/chart-releaser-action@v1.0.0
         with:
           charts_dir: developing
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Run chart-releaser
+      - name: Release incubating charts
         uses: helm/chart-releaser-action@v1.0.0
         with:
           charts_dir: incubating
