@@ -19,4 +19,27 @@ entries:
     urls:
     - https://infrastructure-as-code.github.io/helm-charts/incubating/hello-world-0.1.0.tgz
     version: 0.1.0
+  memstore:
+  - apiVersion: v1
+    appVersion: 0.4.1
+    created: "2020-10-16T03:29:46.537332579Z"
+    description: A Twemproxy-fronted, partitioned in-memory data store backed by Redis
+      or Memcached data shards.
+    digest: d54b81454ab8332fce5581559c31e392fe12eb30fd4fa94d8012d80f528e450b
+    keywords:
+    - redis
+    - memcached
+    - memcache
+    - twemproxy
+    - memorystore
+    - elasticache
+    maintainers:
+    - email: vincetse@users.noreply.github.com
+      name: Vince Tse
+      url: https://github.com/vincetse/
+    name: memstore
+    type: application
+    urls:
+    - https://github.com/infrastructure-as-code/helm-charts/releases/download/memstore-0.1.0/memstore-0.1.0.tgz
+    version: 0.1.0
 generated: "2019-02-21T20:19:46.486464-05:00"
