@@ -1,0 +1,30 @@
+{{- $port := .Values.service.port }}
+{{- $image := .Values.image.repository }}
+{{- $tag := .Values.image.tag }}
+
+1. To forward the remote Postgresql port to the local machine:
+
+  LOCAL_PORT=5432
+  kubectl port-forward service/{{ include "postgres.fullname" . }} --namespace {{ .Release.Namespace }} ${LOCAL_PORT}:{{ $port }}
+
+  PGPORT=${LOCAL_PORT} PGHOST=127.0.0.1 PGUSER={{ .Values.postgres.user }} PGPASSWORD={{ .Values.postgres.password }} PGDATABASE={{ .Values.postgres.db }} psql
+
+
+2. To connect to Postgresql without forwarding a port:
+
+{{- if contains "ClusterIP" .Values.service.type }}
+
+  kubectl run --namespace {{ .Release.Namespace }} --rm --tty -i --restart=Never --image={{ $image }}:{{ $tag }} --env PGPASSWORD='{{ .Values.postgres.password }}' client --command -- psql --host {{ include "postgres.fullname" . }} --port {{ $port }} --username {{ .Values.postgres.user }} --dbname {{ .Values.postgres.db }}
+
+{{- else if contains "NodePort" .Values.service.type }}
+
+  NODE_IP=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.clusterIP}" services {{ include "postgres.fullname" . }})
+  NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].port}" services {{ include "postgres.fullname" . }})
+  kubectl run --namespace {{ .Release.Namespace }} --rm --tty -i --restart=Never --image={{ $image }}:{{ $tag }} --env PGPASSWORD='{{ .Values.postgres.password }}' client --command -- psql --host ${NODE_IP} --port ${NODE_PORT} --username {{ .Values.postgres.user }} --dbname {{ .Values.postgres.db }}
+
+{{- else if contains "LoadBalancer" .Values.service.type }}
+
+  SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "postgres.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  PGPORT={{ $port }} PGHOST=${SERVICE_IP} PGUSER={{ .Values.postgres.user }} PGPASSWORD={{ .Values.postgres.password }} PGDATABASE={{ .Values.postgres.db }} psql
+
+{{- end }}
