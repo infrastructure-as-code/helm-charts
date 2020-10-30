@@ -42,4 +42,15 @@ entries:
     urls:
     - https://github.com/infrastructure-as-code/helm-charts/releases/download/memstore-0.1.0/memstore-0.1.0.tgz
     version: 0.1.0
+  postgres:
+  - apiVersion: v2
+    appVersion: 11-alpine
+    created: "2020-10-30T21:07:12.145941861Z"
+    description: Postgresql database
+    digest: 0dd40889f2d837858d2923c52348749396a48614c425f0ca2ee6bde15c8b3ce7
+    name: postgres
+    type: application
+    urls:
+    - https://github.com/infrastructure-as-code/helm-charts/releases/download/postgres-0.1.0/postgres-0.1.0.tgz
+    version: 0.1.0
 generated: "2019-02-21T20:19:46.486464-05:00"
