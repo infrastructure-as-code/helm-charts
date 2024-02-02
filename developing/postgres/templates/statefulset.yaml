@@ -41,7 +41,7 @@ spec:
               value: {{ .Values.postgres.db }}
           volumeMounts:
             - name: data
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql
               readOnly: false
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
