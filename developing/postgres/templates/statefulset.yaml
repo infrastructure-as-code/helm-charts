@@ -50,7 +50,7 @@ spec:
               command:
                 - pg_isready
                 - --username={{ .Values.postgres.user }}
-                - --hostname=127.0.0.1
+                - --host=127.0.0.1
                 - --dbname={{ .Values.postgres.db }}
             initialDelaySeconds: 120
             periodSeconds: 30
