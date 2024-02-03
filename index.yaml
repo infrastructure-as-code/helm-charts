@@ -45,6 +45,16 @@ entries:
   postgres:
   - apiVersion: v2
     appVersion: 11-alpine
+    created: "2024-02-03T08:16:29.162911073Z"
+    description: Postgresql database
+    digest: 103abe1015dfa72716df1dcf046cc3c9b95ab15555081a6f3c5c19721b459313
+    name: postgres
+    type: application
+    urls:
+    - https://github.com/infrastructure-as-code/helm-charts/releases/download/postgres-0.2.2/postgres-0.2.2.tgz
+    version: 0.2.2
+  - apiVersion: v2
+    appVersion: 11-alpine
     created: "2024-02-03T07:56:17.463553811Z"
     description: Postgresql database
     digest: 458cb3caa700129011678d4c51ec405a95d6422a87c461d47e3c74fe021346c5
@@ -83,4 +93,4 @@ entries:
     urls:
     - https://github.com/infrastructure-as-code/helm-charts/releases/download/postgres-0.1.0/postgres-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-03T07:56:17.463575852Z"
+generated: "2024-02-03T08:16:29.162932874Z"
