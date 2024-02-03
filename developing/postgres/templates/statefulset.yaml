@@ -45,6 +45,12 @@ spec:
               readOnly: false
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+            initialDelaySeconds: 120
+            periodSeconds: 30
 
   volumeClaimTemplates:
   - metadata:
