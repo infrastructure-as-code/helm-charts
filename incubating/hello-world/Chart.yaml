@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "1.0"
 description: A "Hello, World" Helm chart that supports amd64, arm32v6, and arm64v8
 name: hello-world
-version: 0.2.1-r4
+version: 0.2.1-r5
