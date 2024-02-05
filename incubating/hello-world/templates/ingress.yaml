@@ -39,7 +39,7 @@ spec:
               service:
                 Name: {{ $fullName }}
                 port:
-                  number: http
+                  number: 80
 	{{- end }}
   {{- end }}
 {{- end }}
