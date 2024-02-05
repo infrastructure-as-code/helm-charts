@@ -3,6 +3,15 @@ entries:
   hello-world:
   - apiVersion: v1
     appVersion: "1.0"
+    created: "2024-02-05T16:36:46.875616574Z"
+    description: A "Hello, World" Helm chart that supports amd64, arm32v6, and arm64v8
+    digest: 84dfc4f1b36f1b0bc8e8cb173ea16edb4f2b1f563692328be282202f8062bf9c
+    name: hello-world
+    urls:
+    - https://github.com/infrastructure-as-code/helm-charts/releases/download/hello-world-0.2.1-r6/hello-world-0.2.1-r6.tgz
+    version: 0.2.1-r6
+  - apiVersion: v1
+    appVersion: "1.0"
     created: "2024-02-05T16:31:40.132887308Z"
     description: A "Hello, World" Helm chart that supports amd64, arm32v6, and arm64v8
     digest: 81d3f39a5f08c8419ef420f162336931526639ec4553696b4b2dc4978d542270
@@ -157,4 +166,4 @@ entries:
     urls:
     - https://github.com/infrastructure-as-code/helm-charts/releases/download/postgres-0.1.0/postgres-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-05T16:31:40.132940908Z"
+generated: "2024-02-05T16:36:46.875675583Z"
