@@ -32,7 +32,7 @@ spec:
       http:
         paths:
 	{{- range $ingressPaths }}
-          - pathType: {{ .Values.ingress.pathType | default Prefix }}
+          - pathType: {{ .Values.ingress.pathType | default "Prefix" }}
             path: {{ . }}
             backend:
               service:
