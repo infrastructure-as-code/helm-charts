@@ -1,10 +1,11 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "helloworld.fullname" . -}}
 {{- $ingressPaths := .Values.ingress.paths -}}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
+  namespace: {{ .Values.namespace | default "default" }}
   labels:
     app.kubernetes.io/name: {{ include "helloworld.name" . }}
     helm.sh/chart: {{ include "helloworld.chart" . }}
@@ -31,10 +32,13 @@ spec:
       http:
         paths:
 	{{- range $ingressPaths }}
-          - path: {{ . }}
+          - pathType: {{ .Values.ingress.pathType | default Prefix }}
+            path: {{ . }}
             backend:
-              serviceName: {{ $fullName }}
-              servicePort: http
+              service:
+                Name: {{ $fullName }}
+                port:
+                  number: http
 	{{- end }}
   {{- end }}
 {{- end }}

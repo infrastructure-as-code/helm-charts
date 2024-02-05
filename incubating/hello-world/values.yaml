@@ -16,6 +16,8 @@ service:
   type: ClusterIP
   port: 8080
 
+#namespace: default
+
 ingress:
   enabled: false
   annotations: {}
